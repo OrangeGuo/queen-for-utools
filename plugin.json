@@ -1,0 +1,12 @@
+{
+	"pluginName": "Queen",
+	"description": "queen chess",
+	"main": "index.html",
+	"version": "0.1.1",
+	"features": [
+	    {
+	        "code": "hello",
+	        "cmds":["queen", "皇后"]
+	    }
+	]
+}
