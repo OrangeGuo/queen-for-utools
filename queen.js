@@ -7,7 +7,6 @@ var stack = [];
 var X = -1;//记录鼠标上次位置，减少重绘
 var Y = -1;
 var matrix = new Array();
-var places = new Array();//可选列
 var queen = new Image();
 queen.src = 'queen.jpg';
 window.onload = function () {
@@ -18,7 +17,7 @@ window.onload = function () {
     ctx.fillStyle = '#fcffe6';
 
     for (var i = 0; i < num; i++) {
-        places[i] = 0;//空闲
+
         matrix[i] = new Array();
         for (var j = 0; j < num; j++)
             matrix[i][j] = 0;
@@ -45,24 +44,42 @@ function moveQueen(x, y) {
     var s = x + y;
     var inPlace = 1;
     for (var i = 0; i < num; i++) {
-        if (d + i < 0 || d + i > level - 1)
+        if (d + i < 0 || d + i > 7)
             continue;
-        if (matrix[i][d + i] > 0) {
+        if (matrix[i][d + i] == 1) {
             inPlace = 0;
             continue;
         }
         ctx.fillRect(i * size, (d + i) * size, size, size);
     }
     for (var i = 0; i < num; i++) {
-        if (s - i < 0 || s - i > level - 1)
+        if (s - i < 0 || s - i > 7)
             continue;
-        if (matrix[i][s - i] > 0) {
+        if (matrix[i][s - i] == 1) {
             inPlace = 0;
             continue;
         }
         ctx.fillRect(i * size, (s - i) * size, size, size);
     }
-    if (matrix[x][y] > 0 || inPlace == 0 || places[x] > 0 || y != level - 1) {
+    for (var i = 0; i < num; i++) {
+        if (i == x)
+            continue;
+        if (matrix[i][y] == 1) {
+            inPlace = 0;
+            continue;
+        }
+        ctx.fillRect(i * size, y * size, size, size);
+    }
+    for (var i = 0; i < num; i++) {
+        if (i == y)
+            continue;
+        if (matrix[x][i] == 1) {
+            inPlace = 0;
+            continue;
+        }
+        ctx.fillRect(x * size, i * size, size, size);
+    }
+    if (matrix[x][y] > 0 || inPlace == 0 || y != level - 1) {
         ctx.fillStyle = '#f5222d';
         ctx.fillRect(x * size, y * size, size, size);
     }
@@ -72,14 +89,78 @@ function moveQueen(x, y) {
     Y = y;
 }
 function setQueen(x, y) {
-    if (x > 7 || y != level - 1 || matrix[x][y] > 0 || places[x] > 0)
+    if (x > 7 || y != level - 1 || matrix[x][y] > 0)
         return;
+    var d = y - x;
+    var s = x + y;
+    var inPlace = 1;
+    for (var i = 0; i < num; i++) {
+        if (d + i < 0 || d + i > 7)
+            continue;
+        if (matrix[i][d + i] == 1) {
+            inPlace = 0;
+            break;
+        }
+    }
+    for (var i = 0; i < num && inPlace == 1; i++) {
+        if (s - i < 0 || s - i > 7)
+            continue;
+        if (matrix[i][s - i] == 1) {
+            inPlace = 0;
+            break;
+        }
+        ctx.fillRect(i * size, (s - i) * size, size, size);
+    }
+    for (var i = 0; i < num && inPlace == 1; i++) {
+        if (matrix[i][y] == 1) {
+            inPlace = 0;
+            break;
+        }
+
+    }
+    for (var i = 0; i < num && inPlace == 1; i++) {
+        if (matrix[x][i] == 1) {
+            inPlace = 0;
+            break;
+        }
+
+    }
+    if (inPlace == 0)
+        return;
+    for (var i = 0; i < num; i++) {
+        if (d + i < 0 || d + i > 7)
+            continue;
+        matrix[i][d + i] = 2;
+
+    }
+    for (var i = 0; i < num; i++) {
+        if (s - i < 0 || s - i > 7)
+            continue;
+        matrix[i][s - i] = 2;
+
+    }
+    for (var i = 0; i < num; i++) {
+        matrix[i][y] = 2;
+
+    }
+    for (var i = 0; i < num; i++) {
+        matrix[x][i] = 2;
+
+    }
     ctx.putImageData(stack[level - 1], 0, 0);
-    matrix[x][y]++;
-    places[x] = 1;//列占用
+    matrix[x][y] = 1;
+
     ctx.drawImage(queen, x * size, y * size);
     stack.push(ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height));
     level++;
+    var sum = 0;
+    for (var i = 0; i < num; i++)
+        sum += matrix[i][level - 1];
+    if (level <= 8 && sum == 16) {
+        ctx.fillStyle = '#919191';
+        ctx.fillRect(0, x * size - size, num * size, size);
+        return;
+    }
     if (level > 8) {
         ctx.putImageData(stack[0], 0, 0);
         level = 1;
