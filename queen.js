@@ -7,6 +7,8 @@ var stack = [];
 var X=-1;//记录鼠标上次位置，减少重绘
 var Y=-1;
 var matrix=new Array();
+var queen=new Image();
+queen.src='queen.jpg';
 window.onload = function () {
     cs = document.getElementById('cs');//获取画布元素
     ctx = cs.getContext('2d');//context对象
@@ -60,8 +62,7 @@ function moveQueen(x, y) {
             continue;
         ctx.fillRect(i * size, (s - i) * size, size, size);
     }
-    ctx.fillStyle = '#f5222d';
-    ctx.fillRect(x * size, y * size, size, size);
+    ctx.drawImage(queen,x*size,y*size,size,size);
     X=x;
     Y=y;
 }
@@ -70,8 +71,8 @@ function setQueen(x, y) {
         return;
     ctx.putImageData(stack[level - 1], 0, 0);
     matrix[x][y]++;
-    ctx.fillStyle = '#f5222d';
-    ctx.fillRect(x * size, y * size, size, size);
+
+    ctx.drawImage(queen,x*size,y*size);
     stack.push(ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height));
     level++;
     if(level>8){
@@ -82,11 +83,6 @@ function setQueen(x, y) {
 }
 
 function initBorder(x) {
-    ctx.fillStyle = '#222222';
-    ctx.moveTo(0, 0);
-    ctx.lineTo(num * size, 0);
-    ctx.lineTo(num * size, size * x);
-    ctx.lineTo(0, size * x);
-    ctx.lineTo(0, 0);
-    ctx.stroke();
+    ctx.fillStyle = '#95de64';
+    ctx.fillRect(0,x*size-size,num*size,size);
 }
