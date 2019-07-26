@@ -45,7 +45,7 @@ function moveQueen(x, y) {
     var inPlace = 1;
     for (var i = 0; i < num; i++) {
         if (d + i < 0 || d + i > 7)
-            continue;
+            continue;//边界检查
         if (matrix[i][d + i] == 1) {
             inPlace = 0;
             continue;
@@ -54,7 +54,7 @@ function moveQueen(x, y) {
     }
     for (var i = 0; i < num; i++) {
         if (s - i < 0 || s - i > 7)
-            continue;
+            continue;//边界检查
         if (matrix[i][s - i] == 1) {
             inPlace = 0;
             continue;
@@ -93,39 +93,10 @@ function setQueen(x, y) {
         return;
     var d = y - x;
     var s = x + y;
-    var inPlace = 1;
-    for (var i = 0; i < num; i++) {
-        if (d + i < 0 || d + i > 7)
-            continue;
-        if (matrix[i][d + i] == 1) {
-            inPlace = 0;
-            break;
-        }
-    }
-    for (var i = 0; i < num && inPlace == 1; i++) {
-        if (s - i < 0 || s - i > 7)
-            continue;
-        if (matrix[i][s - i] == 1) {
-            inPlace = 0;
-            break;
-        }
-        ctx.fillRect(i * size, (s - i) * size, size, size);
-    }
-    for (var i = 0; i < num && inPlace == 1; i++) {
-        if (matrix[i][y] == 1) {
-            inPlace = 0;
-            break;
-        }
-
-    }
-    for (var i = 0; i < num && inPlace == 1; i++) {
-        if (matrix[x][i] == 1) {
-            inPlace = 0;
-            break;
-        }
-
-    }
-    if (inPlace == 0)
+    var sum = 0;
+    for (var i = 0; i < num; i++)
+        sum += matrix[i][level-1];
+    if (sum==16)
         return;
     for (var i = 0; i < num; i++) {
         if (d + i < 0 || d + i > 7)
@@ -153,12 +124,12 @@ function setQueen(x, y) {
     ctx.drawImage(queen, x * size, y * size);
     stack.push(ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height));
     level++;
-    var sum = 0;
+    sum = 0;
     for (var i = 0; i < num; i++)
         sum += matrix[i][level - 1];
     if (level <= 8 && sum == 16) {
-        ctx.fillStyle = '#919191';
-        ctx.fillRect(0, x * size - size, num * size, size);
+        ctx.fillStyle = '#222222';
+        ctx.fillRect(0, level * size - size, num * size, size);
         return;
     }
     if (level > 8) {
